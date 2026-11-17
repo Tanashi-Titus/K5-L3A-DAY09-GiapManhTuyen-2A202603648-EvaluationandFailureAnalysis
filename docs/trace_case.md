@@ -23,6 +23,19 @@ Lệnh in ra ba phần: các event trong trace (`reply`, `decision`, `model_over
 | Regression test | Tên test + grader/assert nào bắt được; đã thấy fail trên variant lỗi và pass trên `fixed` chưa |
 | Chưa chắc chắn | Điều trace không chứng minh được |
 
+## Case được quan sát
+
+| Trường | Nội dung |
+|---|---|
+| Trial | `seeded_regression C-002@11`; report run ID `E-seeded_regression-20261117-9185` |
+| Triệu chứng | `TrialPass` FAIL: kết quả `resolved` trong khi nhãn là `denied`; ledger ghi `20.000đ` thay vì `0đ`. |
+| Bước sai đầu tiên | Event 3 `model_override`: `delay_days` bị đổi thành `5`. |
+| Vì sao là bước *đầu tiên* | Event 1 tạo handoff không mang fact thay đổi; event 2 đọc DB cho đơn `O-202` với `delay_days=2`. Hai bước này nhất quán. Event 3 là lần đầu agent ghi đè fact DB. |
+| Failure mode | FM-03 `ticket_trust` |
+| Đối chứng | `fixed C-002@11`: không có event `model_override`; quote là `0đ`, status `denied`, ledger `0đ`, grader PASS. |
+| Regression test | `test_ticket_trust_trace_regresses_and_fixed_passes` trong `src/tests/test_lab9_graders.py`; kiểm tra variant lỗi FAIL và `fixed` PASS. |
+| Chưa chắc chắn | Trace chứng minh đường đi của shape MockLLM/seed này, không chứng minh tần suất lỗi trên model hoặc dữ liệu thật. |
+
 ## Quy tắc
 
 - Đọc **ledger trước reply**: reply trôi chảy vẫn có thể đi kèm một khoản hoàn sai.

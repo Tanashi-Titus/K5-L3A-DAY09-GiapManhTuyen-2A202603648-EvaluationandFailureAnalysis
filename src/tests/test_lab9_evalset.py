@@ -7,6 +7,16 @@ import subprocess
 import sys
 
 import pytest
+from lab9.evalset import sha12
+
+
+def test_sha12_is_independent_of_checkout_line_endings(tmp_path):
+    lf = tmp_path / "items-lf.jsonl"
+    crlf = tmp_path / "items-crlf.jsonl"
+    lf.write_bytes(b'{"item_id":"E-001"}\n{"item_id":"E-002"}\n')
+    crlf.write_bytes(b'{"item_id":"E-001"}\r\n{"item_id":"E-002"}\r\n')
+
+    assert sha12(lf) == sha12(crlf)
 
 
 @pytest.fixture

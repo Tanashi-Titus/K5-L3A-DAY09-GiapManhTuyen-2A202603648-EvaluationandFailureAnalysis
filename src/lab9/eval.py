@@ -77,7 +77,8 @@ def load_world(spec: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any
     return world, claims
 
 
-def run_eval(shape: str, spec: dict[str, Any], seeds: list[int] | None = None) -> dict[str, Any]:
+def run_eval(shape: str, spec: dict[str, Any], seeds: list[int] | None = None,
+             include_trials: bool = False) -> dict[str, Any]:
     items = evalset.load_jsonl(Path(spec["eval_set"]))
     labels = json.loads(Path(spec["labels"]).read_text(encoding="utf-8"))
     world, claims = load_world(spec)
@@ -99,9 +100,16 @@ def run_eval(shape: str, spec: dict[str, Any], seeds: list[int] | None = None) -
         for m, g in zip(metric_ids, (GRADERS[m].__name__ for m in metric_ids)):
             res = c.assertions.get(g)
             scores[m] = None if res is None else bool(res.value)
-        rows.append({"item_id": c.metadata["item_id"], "seed": c.metadata["seed"],
-                     "slices": slices_of.get(c.metadata["item_id"], []), **scores,
-                     "cost": float(c.output["result"].get("cost_estimate") or 0.0)})
+        row = {"item_id": c.metadata["item_id"], "seed": c.metadata["seed"],
+               "slices": slices_of.get(c.metadata["item_id"], []), **scores,
+               "cost": float(c.output["result"].get("cost_estimate") or 0.0)}
+        if include_trials:
+            # Private replay input for the optional cross-framework audit. The
+            # caller must project only fields required by its scorers and must
+            # never write this raw Trial to the public eval report.
+            row["_trial"] = c.output
+            row["_label"] = c.expected_output
+        rows.append(row)
     failures = [f"{c.name}:{f.name}:{f.error_message[:80]}" for c in report.cases for f in c.evaluator_failures]
     eval_set_sha = evalset.sha12(Path(spec["eval_set"]))
     run_id = f"E-{shape}-{date.today():%Y%m%d}-{eval_set_sha[:4]}"

@@ -60,7 +60,7 @@ def integrity_check(pr: dict, base: dict, spec: dict, base_spec: dict | None = N
     if pr.get("evaluator_failures"):
         problems.append(f"report has {len(pr['evaluator_failures'])} evaluator failure(s)")
     graded_metrics = [m["id"] for m in spec.get("metrics", [])
-                      if m.get("grader") and not str(m["grader"]).endswith(".summarize")]
+                      if m.get("grader") and not str(m["grader"]).endswith((".summarize", ".aggregate"))]
     for index, row in enumerate(rows):
         for metric_id in graded_metrics:
             if row.get(metric_id) is None:

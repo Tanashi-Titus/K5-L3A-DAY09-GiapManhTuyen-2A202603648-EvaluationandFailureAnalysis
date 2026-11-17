@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Lab 9 — Evaluation & Failure Analysis</title>
+  <style>
+    :root{--bg:#0b1220;--panel:#121e30;--panel2:#17263a;--line:#2a3b50;--text:#edf4ff;--muted:#a8b8cb;--mint:#6ee7b7;--sky:#79c7ff;--amber:#ffd27a;--red:#ff8e8e;--shadow:0 18px 50px #0005}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#18324c 0,transparent 35%),var(--bg);color:var(--text);font:16px/1.55 "Segoe UI",system-ui,sans-serif}
+    button{font:inherit;color:inherit}.shell{max-width:1180px;margin:auto;padding:30px 24px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;color:var(--muted);font-size:.9rem}.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text)}.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,#63e6be,#6ab8ff);color:#071827;font-weight:900}
+    .hero{padding:64px 0 30px;max-width:890px}.eyebrow{color:var(--mint);font-size:.8rem;text-transform:uppercase;letter-spacing:.18em;font-weight:800}.hero h1{font-size:clamp(2.5rem,6vw,4.8rem);line-height:1.02;letter-spacing:-.055em;margin:15px 0}.hero p{color:var(--muted);font-size:1.13rem;max-width:720px}.hero strong{color:var(--text)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 28px}.stat,.panel{background:linear-gradient(155deg,#17263a,#101a2a);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.stat{padding:17px 18px}.stat b{display:block;font-size:1.55rem;letter-spacing:-.04em}.stat span{display:block;color:var(--muted);font-size:.85rem;margin-top:3px}
+    .layout{display:grid;grid-template-columns:265px 1fr;gap:20px;align-items:start}.rail{position:sticky;top:18px;padding:14px}.rail-title{padding:8px 10px 12px;color:var(--muted);font-size:.77rem;text-transform:uppercase;letter-spacing:.13em;font-weight:800}.steps{display:grid;gap:5px}.step-btn{background:transparent;border:1px solid transparent;text-align:left;padding:10px;border-radius:11px;cursor:pointer;display:grid;grid-template-columns:32px 1fr;gap:9px;align-items:center;color:var(--muted)}.step-btn:hover{background:#ffffff09;color:var(--text)}.step-btn[aria-current="step"]{background:#61e6ba12;border-color:#58d9b269;color:var(--text)}.num{width:29px;height:29px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;font-size:.78rem;font-weight:800}.step-btn[aria-current="step"] .num{border-color:var(--mint);color:var(--mint)}.step-name{font-weight:700;font-size:.91rem}.step-sub{font-size:.75rem;color:var(--muted)}.progress-wrap{padding:14px 10px 6px;color:var(--muted);font-size:.8rem}.progress{height:5px;background:#26364a;border-radius:20px;margin-top:8px;overflow:hidden}.progress i{display:block;height:100%;width:12.5%;background:linear-gradient(90deg,var(--mint),var(--sky));transition:width .3s}
+    .content{min-height:620px;padding:30px;position:relative;overflow:hidden}.content:before{content:"";position:absolute;right:-60px;top:-120px;width:300px;height:300px;background:#55d9b00c;border-radius:50%;pointer-events:none}.slide{display:none;position:relative;animation:in .3s ease}.slide.active{display:block}@keyframes in{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}.kicker{color:var(--sky);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.slide h2{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1;letter-spacing:-.04em;margin:8px 0 10px}.lead{font-size:1.1rem;color:#ced9e6;max-width:800px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}.card{background:#ffffff06;border:1px solid var(--line);border-radius:14px;padding:17px}.card h3{font-size:1rem;margin:0 0 8px}.card p,.card li{color:var(--muted);margin:4px 0}.card ul{padding-left:20px;margin:8px 0}.tag{display:inline-flex;align-items:center;gap:6px;border:1px solid #51d8ab55;border-radius:99px;padding:4px 9px;color:var(--mint);font-size:.76rem;font-weight:800}.tag.blue{color:var(--sky);border-color:#79c7ff55}.tag.gold{color:var(--amber);border-color:#ffd27a55}.code{font: .88rem/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;color:#b9e4ff;background:#08111e;border:1px solid #26394c;border-radius:12px;padding:15px;overflow:auto;white-space:pre-wrap}.table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.91rem}.table th,.table td{padding:10px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}.table th{font-size:.77rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.ok{color:var(--mint);font-weight:800}.bad{color:var(--red);font-weight:800}.warn{color:var(--amber);font-weight:800}.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:20px 0}.flow span{background:#ffffff08;border:1px solid var(--line);padding:9px 12px;border-radius:11px;font-weight:700}.flow em{color:var(--mint);font-style:normal}.note{margin-top:22px;padding:16px 18px;border-left:3px solid var(--amber);background:#ffd27a0a;border-radius:0 12px 12px 0;color:#dce5ef}.note b{color:var(--amber);display:block;font-size:.77rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}.controls{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}.controls button{background:#1a2a3f;border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer}.controls button:hover{border-color:var(--mint)}.controls button:disabled{opacity:.35;cursor:not-allowed}.count{color:var(--muted);font-variant-numeric:tabular-nums}.foot{color:var(--muted);font-size:.82rem;text-align:center;margin-top:25px}.mono{font-family:ui-monospace,Consolas,monospace;color:#cce9ff}.callout{border:1px solid #79c7ff55;background:#79c7ff0b;border-radius:13px;padding:14px 16px;color:#cfdeec}.callout strong{color:var(--sky)}
+    @media(max-width:850px){.layout{grid-template-columns:1fr}.rail{position:static}.steps{grid-template-columns:repeat(4,1fr)}.step-btn{grid-template-columns:1fr;justify-items:center;text-align:center}.step-sub{display:none}.content{min-height:0}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:540px){.shell{padding:18px 14px}.hero{padding:42px 0 20px}.steps{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.content{padding:20px}.top .meta{display:none}}
+    @media print{body{background:#fff;color:#111}.shell{max-width:none;padding:0}.top,.rail,.controls,.foot{display:none!important}.hero{padding:10px 0}.layout{display:block}.content{box-shadow:none;border:0;padding:0;min-height:0}.slide{display:block!important;page-break-after:always;color:#111}.card,.stat{background:#fff;box-shadow:none;border-color:#bbb}.card p,.card li,.lead,.stat span{color:#333}.code{color:#111;background:#f4f4f4}.note{color:#333}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="top"><div class="brand"><span class="brand-mark">L9</span><span>VinUni · K5 · AI Product Engineering</span></div><div class="meta">DEMO THUYẾT TRÌNH · 17 NOV 2026</div></header>
+  <section class="hero">
+    <div class="eyebrow">Evaluation & Failure Analysis</div>
+    <h1>Đừng chỉ hỏi agent có chạy.<br>Hãy chứng minh bản mới an toàn hơn.</h1>
+    <p>Lab 9 dựng một quy trình đánh giá có thể lặp lại: lấy trace làm bằng chứng, dùng grader kiểm tra hành vi, đo sai số và chặn regression trước khi merge.</p>
+  </section>
+  <section class="stats" aria-label="Kết quả đã đo">
+    <div class="stat"><b>28 × 5</b><span>eval item × seed · v2</span></div>
+    <div class="stat"><b>3 / 3</b><span>regression variants bị chặn</span></div>
+    <div class="stat"><b>0 / 2</b><span>false alarm trên fixed/refactor</span></div>
+    <div class="stat"><b>4 / 4</b><span>integrity traps bị chặn</span></div>
+  </section>
+
+  <div class="layout">
+    <nav class="rail panel" aria-label="Các bước trình bày">
+      <div class="rail-title">Lộ trình Lab 9</div>
+      <div class="steps" id="stepList">
+        <button class="step-btn" data-step="0" aria-current="step"><span class="num">00</span><span><span class="step-name">Setup</span><br><span class="step-sub">Fork & M0</span></span></button>
+        <button class="step-btn" data-step="1"><span class="num">01</span><span><span class="step-name">Failure map</span><br><span class="step-sub">Trace → taxonomy</span></span></button>
+        <button class="step-btn" data-step="2"><span class="num">02</span><span><span class="step-name">Grading</span><br><span class="step-sub">Judge & code</span></span></button>
+        <button class="step-btn" data-step="3"><span class="num">03</span><span><span class="step-name">CI gate</span><br><span class="step-sub">Bootstrap & M4</span></span></button>
+        <button class="step-btn" data-step="4"><span class="num">04</span><span><span class="step-name">Eval v2</span><br><span class="step-sub">Adversarial slices</span></span></button>
+        <button class="step-btn" data-step="5"><span class="num">05</span><span><span class="step-name">Stability</span><br><span class="step-sub">A/A & pass^k</span></span></button>
+        <button class="step-btn" data-step="6"><span class="num">06</span><span><span class="step-name">Integrity</span><br><span class="step-sub">Traps & ratchet</span></span></button>
+        <button class="step-btn" data-step="7"><span class="num">07</span><span><span class="step-name">Takeaways</span><br><span class="step-sub">Limits & next step</span></span></button>
+      </div>
+      <div class="progress-wrap"><span id="progressText">Bước 1 / 8</span><div class="progress"><i id="progressBar"></i></div></div>
+    </nav>
+
+    <section class="content panel" aria-live="polite">
+      <article class="slide active">
+        <div class="kicker">M0 · Thiết lập nguồn đánh giá</div><h2>Lab 9 chạy trong fork Day 9</h2>
+        <p class="lead">Ta lấy agent mẫu và dữ liệu public của Day 8 làm đối tượng kiểm tra. Các thay đổi của bài, eval set, trace và report đều nằm trong fork Day 9.</p>
+        <div class="flow"><span>Day 8 <em>src/</em></span><em>→</em><span>Fork Day 9</span><em>→</em><span>Nhánh <span class="mono">starter/d09</span></span><em>→</em><span>Eval harness</span></div>
+        <div class="grid2"><div class="card"><h3>Quy trình đầu vào</h3><ul><li>Chép `src/` mẫu vào fork Day 9.</li><li>Không sửa repo Lab 8; không dùng cache/report cũ.</li><li>Chạy smoke và sinh eval set bằng script.</li></ul></div><div class="card"><h3>M0 đã xác nhận</h3><p><span class="tag">M0 PASS</span></p><p>Eval set v1 được build từ dữ liệu public; report được tạo bằng harness, không tự điền chỉ số.</p></div></div>
+        <div class="code">python -m lab9.smoke
+python -m lab9.evalset --build</div>
+        <aside class="note"><b>Lời dẫn</b>“Mục tiêu của Lab 9 không phải sửa agent Day 8. Ta giữ nguyên agent mẫu, rồi dựng cách đo và chặn phiên bản có hành vi tệ hơn.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">M1 · Failure analysis</div><h2>Trace cho biết lỗi bắt đầu ở đâu</h2>
+        <p class="lead">Mỗi failure mode phải có định nghĩa kiểm chứng được, dấu vết cụ thể và grader tương ứng. Nhãn không gắn theo suy đoán từ câu trả lời cuối.</p>
+        <div class="grid2"><div class="card"><h3>Ví dụ FM-03 · tin ticket hơn DB</h3><p>`seeded_regression C-002@11`: event `model_override` ghi `delay_days=5`; trace `fixed` đối chứng không có override và giữ quote của DB.</p><p><span class="tag blue">retrieval</span> <span class="tag">DbFactKept</span></p></div><div class="card"><h3>Ví dụ FM-08 · báo sai ledger</h3><p>Trace `trace_fm08 C-008@11`: reply báo 35.000đ, ledger ghi 20.000đ. Lab 8 vẫn đánh PASS; grader mới so reply với ledger để phát hiện sai lệch.</p><p><span class="tag blue">orchestration/state</span> <span class="tag">ReplyLedgerMatch</span></p></div></div>
+        <div class="callout"><strong>FM-09 · Cross-principal:</strong> trace `C-110@11` cho thấy lookup bị từ chối (`visible=false`, `outside_principal_scope`). Đây là bằng chứng probe bị chặn đúng — không phải một vụ vượt quyền đã quan sát.</div>
+        <div class="code">failure mode → bằng chứng trace → grader → metric
+FM-03         → model_override → DbFactKept → db_fact_kept
+FM-08         → reply ≠ ledger → ReplyLedgerMatch → reply_ledger_match</div>
+        <aside class="note"><b>Lời dẫn</b>“Taxonomy hữu ích khi một người khác có thể mở đúng trace, nhìn event và hiểu tại sao grader đánh lỗi. Nếu chưa quan sát được lỗi, ta ghi rõ đó là probe và kết quả từ chối.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">M2–M3 · Grader quality</div><h2>Đo cả độ tin cậy của người chấm</h2>
+        <p class="lead">Judge ngôn ngữ được đối chiếu với nhãn người; tiền, approval và quyền truy cập được chấm bằng code từ trajectory, proposal, reply và ledger.</p>
+        <table class="table"><thead><tr><th>Judge</th><th>κ</th><th>Precision</th><th>Recall</th><th>Quyết định</th></tr></thead><tbody><tr><td>tone_ok</td><td>0.757</td><td>0.857</td><td>0.800</td><td class="ok">Đạt floor audit</td></tr><tr><td>helpful</td><td>0.375</td><td>1.000</td><td>0.300</td><td class="warn">Không dùng làm gate</td></tr></tbody></table>
+        <div class="grid2"><div class="card"><h3>Code graders</h3><ul><li>`ApprovalBypass`: không cho báo/ghi hoàn nếu approval bị từ chối.</li><li>`RefundAmountCorrect`: kiểm proposal và ledger.</li><li>`ReplyLedgerMatch`: đối chiếu số tiền nói với số tiền ghi.</li></ul></div><div class="card"><h3>Điểm rút ra</h3><p>Precision cao không đủ nếu recall thấp. Tiêu chí `helpful` bỏ sót nhiều lỗi nên bị loại khỏi release gate.</p></div></div>
+        <aside class="note"><b>Lời dẫn</b>“Không phải metric nào cũng nên được nâng thành gate. Judge chỉ được dùng khi đạt các floor đã công bố; những điều có ground truth cấu trúc thì dùng assertion code.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">M4 · Paired comparison</div><h2>So sánh cùng claim và cùng seed</h2>
+        <p class="lead">Paired bootstrap resample ở cấp item, so sánh PR với baseline. Gate trả quyết định rõ ràng: regression rõ phải block; bản sửa đúng phải qua.</p>
+        <div class="grid2"><div class="card"><h3>Đối chứng</h3><p>`fixed` qua gate. Trên v1, pass_rate Δ +0.014; CI [0.000, +0.043].</p><span class="tag">MERGE</span></div><div class="card"><h3>Regression có chủ đích</h3><p>`seeded_regression` bị chặn: pass_rate Δ −0.271; CI [−0.500, −0.057]. Approval bypass và sai lệch hoàn tiền cũng bị phát hiện.</p><span class="tag gold">BLOCK</span></div></div>
+        <div class="code">python -m lab9.gate --pr reports/eval_seeded_regression.json \
+  --baseline reports/baseline_v1.json
+# exit 1 = blocked · fixed exit 0 = merge</div>
+        <p><span class="tag blue">Checkpoint M4</span> Commit `7ee855d` đã lưu trạng thái Core trước khi làm v2.</p>
+        <aside class="note"><b>Lời dẫn</b>“Dùng cùng item và seed giúp giảm nhiễu khi so hai phiên bản. Khoảng tin cậy cho biết chênh lệch có thể chỉ là dao động hay đã giảm nhất quán.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">M5 · Eval set v2</div><h2>Regression nhỏ có thể bị trung bình che khuất</h2>
+        <p class="lead">V2 thêm 14 adversarial items vào 14 public items; gắn slice cho tiền, adversarial và denial. Gate chấm từng slice riêng bên cạnh metric toàn cục.</p>
+        <div class="grid2"><div class="card"><h3>Baseline được đo</h3><table class="table"><tbody><tr><td>eval set</td><td>28 item × 5 seed</td></tr><tr><td>pass_rate</td><td>0.9786</td></tr><tr><td>refund_amount_correct</td><td>0.9786</td></tr><tr><td>reply_ledger_match</td><td>1.0000</td></tr><tr><td>approval_bypass / secret_leak</td><td>0 / 0</td></tr></tbody></table></div><div class="card"><h3>Slice regression</h3><p>Metric tổng thể `pass_rate=0.9357` còn trên sàn 0.85; slice gate vẫn chặn `money_movement/pass_rate`.</p><span class="tag gold">BLOCK BY SLICE</span><p style="margin-top:10px">Eval set SHA: <span class="mono">080208de0b05</span></p></div></div>
+        <div class="code">Cơ chế tấn công → FM code → item v2 → slice → gate</div>
+        <aside class="note"><b>Lời dẫn</b>“Một bản có thể nhìn ổn toàn cục nhưng sai đúng ở luồng hoàn tiền. Vì vậy ta giữ slice quan trọng thành điều kiện block độc lập.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">M6 · Nondeterminism</div><h2>Đo noise trước khi chọn ngưỡng</h2>
+        <p class="lead">Chạy A/A với bộ seed thay thế để quan sát dao động. `pass_hat_5` ước lượng xác suất item pass cả 5 lần — phù hợp để soi agent chập chờn.</p>
+        <table class="table"><thead><tr><th>Run</th><th>pass_hat_5</th><th>Diễn giải</th></tr></thead><tbody><tr><td>Swarm baseline</td><td>0.8929</td><td>28 item, 5 seed cố định</td></tr><tr><td>A/A seeds 66,77,88,99,110</td><td>0.8929</td><td>Δ 0.0000 so với baseline</td></tr><tr><td>flaky_regression</td><td>0.5714</td><td class="bad">Bị gate chặn</td></tr></tbody></table>
+        <div class="callout"><strong>Ngưỡng đặt:</strong> `pass_hat_5 ≥ 0.89`. Baseline đo được 0.8929; flaky variant đo được 0.5714. A/A hiện mới có một bộ seed thay thế, vì vậy ngưỡng cần được kiểm chứng thêm khi eval set tăng.</div>
+        <aside class="note"><b>Lời dẫn</b>“Không chọn ngưỡng để làm đẹp bài. Ta lấy baseline, A/A và mutation score đã chạy. Khoảng cách lớn ở variant flaky giúp gate bắt được tính không ổn định với bộ seed hiện tại.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">M7 · Integrity & ratchet</div><h2>Report cũng phải được xem là dữ liệu cần bảo vệ</h2>
+        <p class="lead">Gate kiểm tính đầy đủ và nhất quán của report trước khi tin vào metric: row count, cặp item-seed, lỗi evaluator, slice tags và mức chặt của spec.</p>
+        <table class="table"><thead><tr><th>Trap công khai</th><th>Phản ứng</th></tr></thead><tbody><tr><td>grader lỗi / giá trị missing</td><td class="ok">BLOCK · integrity</td></tr><tr><td>bỏ failing rows</td><td class="ok">BLOCK · row count</td></tr><tr><td>chọn seed đẹp</td><td class="ok">BLOCK · cặp item-seed</td></tr><tr><td>nới threshold / bỏ slice</td><td class="ok">BLOCK · ratchet</td></tr></tbody></table>
+        <div class="grid2"><div class="card"><h3>Đã chạy</h3><p>Mutation score: <strong>3/3 regression bị chặn</strong>; `fixed` và `honest_refactor` merge; <strong>0 false alarm</strong>.</p></div><div class="card"><h3>Release flow</h3><p>Commit trên `starter/d09` → PR vào `main` của fork → GitHub Actions chạy test và eval gate.</p><p>Checkpoint Core: <span class="mono">7ee855d</span></p></div></div>
+        <aside class="note"><b>Lời dẫn</b>“Nếu report có thể bị cắt dòng hoặc đổi nhãn slice mà gate vẫn qua, thì số đo không còn đáng tin. Integrity là điều kiện trước mọi so sánh.”</aside>
+      </article>
+
+      <article class="slide">
+        <div class="kicker">Kết luận</div><h2>Học được gì từ Lab 9?</h2>
+        <div class="grid2"><div class="card"><h3>Quy trình</h3><ul><li>Trace → taxonomy → grader → eval set.</li><li>Calibrate judge trước khi dùng làm gate.</li><li>So sánh paired, đo slices và noise.</li><li>Kiểm integrity rồi mới tin report.</li></ul></div><div class="card"><h3>Kết quả thực nghiệm</h3><ul><li>Regression v1 rõ ràng bị chặn.</li><li>Slice regression bị chặn dù metric tổng thể còn qua.</li><li>Flaky variant giảm pass_hat_5 xuống 0.5714.</li><li>4 trap công khai đều bị phát hiện.</li></ul></div></div>
+        <div class="callout"><strong>Giới hạn:</strong> chỉ 28 item × 5 seed, MockLLM, public eval data; chỉ một A/A seed-set thay thế. Đây là bằng chứng cho harness trong bài lab, không phải bảo đảm chất lượng trên model hoặc người dùng thật.</div>
+        <p class="lead" style="margin-top:20px">Thông điệp cuối: <strong>một agent tốt cần được đo bằng bằng chứng lặp lại — và phải có cơ chế chặn bản xấu trước khi phát hành.</strong></p>
+        <aside class="note"><b>Lời dẫn kết</b>“Lab 9 chuyển câu ‘agent có vẻ ổn’ thành một quy trình có dữ liệu, tiêu chí, độ bất định và quyết định merge kiểm tra được.”</aside>
+      </article>
+    </section>
+  </div>
+  <footer class="foot">Điều khiển bằng nút, phím ← → hoặc bấm từng mục bên trái · Mở bằng trình duyệt, không cần server.</footer>
+</main>
+<script>
+  (()=>{const slides=[...document.querySelectorAll('.slide')],buttons=[...document.querySelectorAll('.step-btn')],bar=document.getElementById('progressBar'),label=document.getElementById('progressText'),prev=document.createElement('button'),next=document.createElement('button'),count=document.createElement('span');let current=0;
+  prev.textContent='← Trước';next.textContent='Tiếp →';count.className='count';const controls=document.createElement('div');controls.className='controls';controls.append(prev,count,next);document.querySelector('.content').append(controls);
+  function show(n){current=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>s.classList.toggle('active',i===current));buttons.forEach((b,i)=>i===current?b.setAttribute('aria-current','step'):b.removeAttribute('aria-current'));bar.style.width=((current+1)/slides.length*100)+'%';label.textContent=`Bước ${current+1} / ${slides.length}`;count.textContent=`${String(current+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;prev.disabled=current===0;next.disabled=current===slides.length-1;}
+  buttons.forEach(b=>b.addEventListener('click',()=>show(Number(b.dataset.step))));prev.addEventListener('click',()=>show(current-1));next.addEventListener('click',()=>show(current+1));document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')show(current+1);if(e.key==='ArrowLeft')show(current-1)});show(0);})();
+</script>
+</body>
+</html>

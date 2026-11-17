@@ -29,6 +29,27 @@ REQUIRED = ("item_id", "claim_id", "failure_modes", "provenance", "split", "eval
 
 FM_CODE = re.compile(r"FM-\d{2}")
 
+# Claim-to-mode tags are backed by the reproducible single-bug trace variants in
+# lab9.variants.TRACE_VARIANTS. Keep the trace references beside each tag so the
+# generated eval item carries an audit trail rather than an unsupported label.
+FAILURE_EVIDENCE: dict[str, dict[str, str]] = {
+    "C-001": {"FM-01": "trace_fm01 C-001@11", "FM-07": "trace_fm07 C-001@11"},
+    "C-002": {"FM-01": "trace_fm01 C-002@11", "FM-03": "trace_fm03 C-002@11"},
+    "C-003": {"FM-01": "trace_fm01 C-003@11"},
+    "C-004": {"FM-01": "trace_fm01 C-004@11"},
+    "C-005": {"FM-01": "trace_fm01 C-005@11"},
+    "C-006": {"FM-01": "trace_fm01 C-006@11", "FM-06": "trace_fm06 C-006@11"},
+    "C-007": {"FM-01": "trace_fm01 C-007@11", "FM-02": "trace_fm02 C-007@11"},
+    "C-008": {"FM-01": "trace_fm01 C-008@11", "FM-08": "trace_fm08 C-008@11"},
+    "C-009": {"FM-01": "trace_fm01 C-009@11"},
+    "C-010": {"FM-01": "trace_fm01 C-010@11", "FM-07": "trace_fm07 C-010@11"},
+    "C-011": {"FM-01": "trace_fm01 C-011@11", "FM-07": "trace_fm07 C-011@11"},
+    "C-012": {"FM-01": "trace_fm01 C-012@11", "FM-07": "trace_fm07 C-012@11"},
+    "C-013": {"FM-01": "trace_fm01 C-013@11"},
+    "C-014": {"FM-01": "trace_fm01 C-014@11", "FM-04": "trace_fm04 C-014@11",
+              "FM-05": "trace_fm05 C-014@11"},
+}
+
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
@@ -43,14 +64,16 @@ def build(source: Path = SOURCE) -> tuple[int, int]:
     items, labels = [], {}
     for n, claim in enumerate(claims, start=1):
         item_id = f"E-{n:03d}"
+        evidence = FAILURE_EVIDENCE.get(claim["claim_id"], {})
+        if not evidence:
+            raise ValueError(f"no trace-backed failure-mode mapping for {claim['claim_id']}")
         items.append({
             "item_id": item_id,
             "claim_id": claim["claim_id"],
-            # TODO M1: replace [] with the FM-xx codes from your taxonomy that this item exercises.
-            "failure_modes": [],
+            "failure_modes": sorted(evidence),
             "provenance": {"source": "lab8_public", "matrix_id": claim.get("matrix_id"),
-                           "from_trace": None, "generator": None,
-                           "label_by": "lab8_matrix", "checked_by": None},
+                           "from_trace": "; ".join(evidence.values()), "generator": None,
+                           "label_by": "lab8_matrix", "checked_by": "lab9_trace_probe"},
             "split": "regression",
             "eval_set_version": VERSION,
         })

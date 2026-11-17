@@ -22,9 +22,22 @@ VARIANTS = {
     "flaky_regression": frozenset({"no_override", "rare", "round_down"}),
 }
 
+# Isolated single-bug shapes make taxonomy evidence reproducible through trace_case.
+# They are diagnostic only and are not included in mutation.scorecard's expected variants.
+TRACE_VARIANTS = {
+    "trace_fm01": frozenset({"leaky_trace"}),
+    "trace_fm02": frozenset({"ignore_denied"}),
+    "trace_fm03": frozenset({"ticket_trust"}),
+    "trace_fm04": frozenset({"sum_parts"}),
+    "trace_fm05": frozenset({"pre_deducted"}),
+    "trace_fm06": frozenset({"stale_clause"}),
+    "trace_fm07": frozenset({"sibling_refund"}),
+    "trace_fm08": frozenset({"misreport"}),
+}
+
 
 def register() -> list[str]:
     from lab8.shapes import SHAPES
-    for name, bugs in VARIANTS.items():
+    for name, bugs in {**VARIANTS, **TRACE_VARIANTS}.items():
         SHAPES.setdefault(name, make_shape(name, bugs))
     return list(VARIANTS)

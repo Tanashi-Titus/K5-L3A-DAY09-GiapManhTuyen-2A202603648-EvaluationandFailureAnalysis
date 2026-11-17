@@ -1,0 +1,2 @@
+# Optional framework used only for the cross-framework grader comparison.
+inspect-ai==0.3.290

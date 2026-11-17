@@ -1,0 +1,47 @@
+{
+  "framework": "Inspect AI",
+  "framework_version": "0.3.290",
+  "reference_framework": "pydantic-evals",
+  "reference_run_id": "E-swarm-20261117-aabc",
+  "shape": "swarm",
+  "eval_set_sha": "aabcd5f6d8a9",
+  "items": 28,
+  "seeds": [
+    11,
+    22,
+    33,
+    44,
+    55
+  ],
+  "llm_calls": 0,
+  "scorer_decisions": 420,
+  "overall_agreement_count": 420,
+  "overall_agreement_rate": 1.0,
+  "comparisons": {
+    "approval_bypass": {
+      "n": 140,
+      "agreement_count": 140,
+      "agreement_rate": 1.0,
+      "pydantic_true_count": 0,
+      "inspect_true_count": 0,
+      "mismatch_sample_ids": []
+    },
+    "refund_amount_correct": {
+      "n": 140,
+      "agreement_count": 140,
+      "agreement_rate": 1.0,
+      "pydantic_true_count": 137,
+      "inspect_true_count": 137,
+      "mismatch_sample_ids": []
+    },
+    "reply_ledger_match": {
+      "n": 140,
+      "agreement_count": 140,
+      "agreement_rate": 1.0,
+      "pydantic_true_count": 140,
+      "inspect_true_count": 140,
+      "mismatch_sample_ids": []
+    }
+  },
+  "method": "Replay recorded swarm trials through Inspect custom scorers; compare against pydantic-evals decisions."
+}
